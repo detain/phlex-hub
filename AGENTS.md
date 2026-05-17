@@ -1,0 +1,83 @@
+# AGENTS.md — detain/phlex-hub
+
+Agent brief for the `phlex-hub` package. The hub is the multi-server
+cloud directory + relay layer. It is **not** the media server — keep
+library scanning, transcoding, FFmpeg, HLS, DLNA, and Live TV out of
+this repo.
+
+## Conventions
+
+- **PHP 8.3+**. Modern features (readonly properties, enums, first-class
+  callable syntax) are welcome where they aid clarity.
+- **`declare(strict_types=1);`** at the top of every PHP file.
+- **PSR-12** coding standard, enforced by phpcs.
+- **PSR-4 autoload** — `Phlex\Hub\` → `src/`, `Phlex\Hub\Tests\` →
+  `tests/`. Namespaces mirror directories.
+- **Static analysis bar:** PHPStan level 9 and Psalm errorLevel 1 — both
+  green from day 1. No baselines.
+- **Database access:** only `Workerman\MySQL\Connection`. No raw PDO,
+  no mysqli. Pass parameters as bound parameters; do not interpolate
+  user input into SQL strings.
+- **Logging:** always via `LoggerFactory::get(LogChannels::*)`. Channels
+  defined in `src/Common/Logger/LogChannels.php`.
+- **Container:** PHP-DI 7 (`Phlex\Hub\Common\Container\ContainerFactory`).
+  Register new services through a `ServiceProviderInterface`
+  implementation; do not call `set()` on the container directly.
+- **Events:** Tukio (PSR-14). Event DTOs live in
+  `Phlex\Shared\Events\*` (the `detain/phlex-shared` package).
+- **Shared types:** any DTO that travels between `phlex-server` and
+  `phlex-hub` (claim request/response, server info, JWT claims) lives
+  in `detain/phlex-shared`. Do not duplicate.
+- **PHPDoc on every public class and method.** `@package`, `@since`,
+  parameter and return tags as appropriate. Static analysers depend on
+  it.
+
+## Layout (intended, fills in across v0.x)
+
+```
+src/
+  Application.php
+  Version.php
+  Common/
+    Container/    # PSR-11 container factory + providers
+    Database/     # ConnectionPool wrapper around workerman/mysql
+    Logger/       # LoggerFactory, LogChannels, StructuredLogger
+  Http/           # Request, Response, Router
+  Health/         # GET /health controller
+  # (B.6+ adds Auth/, Hub/, Relay/, WebPortal/)
+config/
+  server.php database.php logger.php
+migrations/
+public/
+  index.php       # Workerman HTTP entry
+scripts/
+  run-migrations.php
+tests/
+  (mirror of src/, PHPUnit 10)
+```
+
+## Layout rationale
+
+See `plans/expansion/b.1-shared-design.md` in
+[`detain/phlex`](https://github.com/detain/phlex) for the cross-repo
+design context (what goes where, what stays in `phlex-server`, what
+moves to `phlex-shared`). Do not re-litigate that design here —
+propose changes in a new plan step against `detain/phlex` if needed.
+
+## Before committing
+
+1. `composer install` resolves clean.
+2. `./vendor/bin/phpunit` green.
+3. `./vendor/bin/phpstan analyze --no-progress` green.
+4. `./vendor/bin/phpcs --standard=PSR12 src/` clean.
+5. `./vendor/bin/psalm --no-progress` clean.
+6. `composer validate --strict` clean.
+7. `composer audit --no-dev` no advisories.
+
+If any tool emits warnings, fix the code — do not add to a baseline.
+
+## Versioning
+
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html). Bump
+`Phlex\Hub\Version::VERSION` in lockstep with the git tag and the
+`CHANGELOG.md` heading.

@@ -1,0 +1,50 @@
+{
+    "name": "detain/phlex-hub",
+    "description": "Central cloud directory + reverse-tunnel relay for Phlex media servers. Sign in once, reach any of your servers from anywhere. Self-hostable.",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "crell/tukio": "^2.0",
+        "detain/phlex-shared": "^0.2",
+        "monolog/monolog": "^3.0",
+        "php-di/php-di": "^7.0",
+        "psr/container": "^2.0",
+        "psr/event-dispatcher": "^1.0",
+        "smarty/smarty": "^4.0",
+        "workerman/mysql": "^1.0",
+        "workerman/workerman": "^5.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^10.0",
+        "squizlabs/php_codesniffer": "^3.10",
+        "vimeo/psalm": "^5.0"
+    },
+    "repositories": [
+        { "type": "vcs", "url": "git@github.com:detain/phlex-shared.git" }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Phlex\\Hub\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Phlex\\Hub\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "stan": "phpstan analyze --no-progress",
+        "cs": "phpcs --standard=PSR12 src/",
+        "psalm": "psalm --no-progress",
+        "start": "php public/index.php start"
+    }
+}

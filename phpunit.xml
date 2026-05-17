@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache" executionOrder="random" failOnRisky="true" failOnWarning="true" beStrictAboutOutputDuringTests="true" displayDetailsOnTestsThatTriggerDeprecations="true" displayDetailsOnTestsThatTriggerWarnings="true" displayDetailsOnTestsThatTriggerErrors="true">
+  <testsuites>
+    <testsuite name="Unit">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
+  <coverage>
+    <report>
+      <html outputDirectory="coverage-report"/>
+      <clover outputFile="coverage.xml"/>
+      <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="true"/>
+    </report>
+  </coverage>
+</phpunit>

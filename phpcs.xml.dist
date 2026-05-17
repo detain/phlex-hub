@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="phlex-hub">
+    <description>PSR-12 coding standard for detain/phlex-hub.</description>
+
+    <file>src</file>
+
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg value="np"/>
+
+    <rule ref="PSR12"/>
+</ruleset>

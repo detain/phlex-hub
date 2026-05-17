@@ -1,0 +1,10 @@
+/vendor/
+/.logs/
+/.phpunit.cache/
+/coverage-report/
+/coverage.xml
+/build/
+/templates_c/
+/var/
+public/workerman.*.pid
+public/workerman.log

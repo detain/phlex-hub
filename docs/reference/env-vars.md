@@ -1,0 +1,54 @@
+# Environment variables — `phlex-hub`
+
+Every runtime setting `phlex-hub` reads is exposed as an environment
+variable prefixed with `HUB_`. The configuration files under `config/`
+are thin wrappers that fall back to safe development defaults when a
+variable is unset.
+
+## HTTP worker (`config/server.php`)
+
+| Variable             | Default                       | Description                                                                  |
+| -------------------- | ----------------------------- | ---------------------------------------------------------------------------- |
+| `HUB_HOST`           | `0.0.0.0`                     | Bind address for the Workerman HTTP worker.                                  |
+| `HUB_PORT`           | `8800`                        | TCP port the worker listens on.                                              |
+| `HUB_WORKERS`        | `2`                           | Number of worker processes Workerman should fork.                            |
+| `HUB_WORKERMAN_LOG`  | `<repo>/.logs/workerman.log`  | Path Workerman writes its master-log to. Directory must exist or be writable. |
+
+## Database (`config/database.php`)
+
+| Variable          | Default       | Description                                       |
+| ----------------- | ------------- | ------------------------------------------------- |
+| `HUB_DB_HOST`     | `127.0.0.1`   | MySQL host the hub connects to.                   |
+| `HUB_DB_PORT`     | `3306`        | MySQL port.                                       |
+| `HUB_DB_USER`     | `phlex_hub`   | MySQL username.                                   |
+| `HUB_DB_PASSWORD` | `phlex_hub`   | MySQL password. **Override in any non-dev env.**  |
+| `HUB_DB_NAME`     | `phlex_hub`   | Database name.                                    |
+
+## Container caching
+
+| Variable                       | Default | Description                                                                                                                       |
+| ------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `PHLEX_HUB_CONTAINER_COMPILE`  | unset   | When truthy (`1`, `true`, `yes`, `on`), PHP-DI writes compiled definitions to `var/cache/container/` for faster cold-start. Off for dev. |
+
+## Logging
+
+The logger config (`config/logger.php`) is currently file-based only —
+no env knobs. Channels: `application`, `http`, `error`, `hub`, `relay`
+(see `src/Common/Logger/LogChannels.php`).
+
+## Examples
+
+```bash
+# Local dev with default ports, default MySQL creds
+php public/index.php start
+
+# Different port and DB
+HUB_PORT=9000 HUB_DB_HOST=mysql.internal php public/index.php start
+
+# Production with compiled container
+PHLEX_HUB_CONTAINER_COMPILE=1 \
+  HUB_DB_HOST=db.prod \
+  HUB_DB_PASSWORD="$(cat /run/secrets/hub-db)" \
+  HUB_WORKERS=8 \
+  php public/index.php start
+```
