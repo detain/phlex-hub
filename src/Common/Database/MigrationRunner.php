@@ -29,7 +29,7 @@ use Workerman\MySQL\Connection;
  */
 class MigrationRunner
 {
-    public const TRACKING_TABLE = 'migrations';
+    public const string TRACKING_TABLE = 'migrations';
 
     /**
      * @param Connection $db             Live MySQL connection.

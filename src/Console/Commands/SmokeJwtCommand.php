@@ -75,8 +75,8 @@ final class SmokeJwtCommand extends Command
                 $output->writeln(sprintf(
                     '<error>FAIL: %s mismatch: expected %s, got %s</error>',
                     $key,
-                    json_encode($value),
-                    json_encode($actual[$key]),
+                    (string) json_encode($value),
+                    (string) json_encode($actual[$key]),
                 ));
 
                 return Command::FAILURE;
