@@ -32,7 +32,8 @@
      *
      * @return string|null
      */
-    function getAccessToken() {
+    function getAccessToken()
+    {
         var match = document.cookie.match(/(?:^|;\s*)phlix_hub_token=([^;]+)/);
         if (match) {
             return decodeURIComponent(match[1]);
@@ -47,7 +48,8 @@
      * @param {object} options
      * @return {Promise<object>}
      */
-    function fetchJson(url, options) {
+    function fetchJson(url, options)
+    {
         var token = getAccessToken();
         var headers = {
             'Accept': 'application/json',
@@ -69,7 +71,8 @@
      * @param {number|null} timestamp
      * @return {string}
      */
-    function formatDate(timestamp) {
+    function formatDate(timestamp)
+    {
         if (timestamp === null || timestamp === undefined) {
             return 'Never';
         }
@@ -84,17 +87,24 @@
      * @param {number|null} timestamp
      * @return {string}
      */
-    function formatRelativeTime(timestamp) {
+    function formatRelativeTime(timestamp)
+    {
         if (timestamp === null || timestamp === undefined) {
             return 'never';
         }
         var diff = Date.now() - (timestamp * 1000);
         var seconds = Math.floor(diff / 1000);
-        if (seconds < 60) return 'just now';
+        if (seconds < 60) {
+            return 'just now';
+        }
         var minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return minutes + ' min ago';
+        if (minutes < 60) {
+            return minutes + ' min ago';
+        }
         var hours = Math.floor(minutes / 60);
-        if (hours < 24) return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+        if (hours < 24) {
+            return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+        }
         var days = Math.floor(hours / 24);
         return days + ' day' + (days > 1 ? 's' : '') + ' ago';
     }
@@ -105,7 +115,8 @@
      * @param {number|null} expiresAt
      * @return {string}
      */
-    function formatExpiry(expiresAt) {
+    function formatExpiry(expiresAt)
+    {
         if (expiresAt === null || expiresAt === undefined) {
             return 'Never expires';
         }
@@ -115,9 +126,15 @@
         }
         var diff = expiresAt - now;
         var days = Math.floor(diff / 86400);
-        if (days < 1) return 'Expires today';
-        if (days === 1) return 'Expires tomorrow';
-        if (days < 30) return 'Expires in ' + days + ' days';
+        if (days < 1) {
+            return 'Expires today';
+        }
+        if (days === 1) {
+            return 'Expires tomorrow';
+        }
+        if (days < 30) {
+            return 'Expires in ' + days + ' days';
+        }
         return 'Expires ' + formatDate(expiresAt);
     }
 
@@ -127,7 +144,8 @@
      * @param {string} permission
      * @return {string}
      */
-    function permissionBadge(permission) {
+    function permissionBadge(permission)
+    {
         if (permission === 'readwrite') {
             return '<span class="badge badge-permission">Read/Write</span>';
         }
@@ -140,7 +158,8 @@
      * @param {object} link
      * @return {string}
      */
-    function statusBadge(link) {
+    function statusBadge(link)
+    {
         if (link.use_count >= link.max_uses) {
             return '<span class="badge badge-exhausted">Exhausted</span>';
         }
@@ -156,7 +175,8 @@
      * @param {object} link
      * @return {string} HTML string
      */
-    function renderLinkCard(link) {
+    function renderLinkCard(link)
+    {
         var serverName = link.server_name || link.server_id || 'Unknown Server';
         var libraryName = link.library_id ? (link.library_name || link.library_id) : 'All Libraries';
         var uses = link.use_count + '/' + link.max_uses;
@@ -190,8 +210,11 @@
      * @param {string} str
      * @return {string}
      */
-    function escapeHtml(str) {
-        if (!str) return '';
+    function escapeHtml(str)
+    {
+        if (!str) {
+            return '';
+        }
         return String(str)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -204,14 +227,21 @@
      *
      * @param {Array} links
      */
-    function showLinks(links) {
-        if (!linksList) return;
-        if (links.length === 0) {
-            linksList.innerHTML = '';
-            if (emptyState) emptyState.style.display = 'block';
+    function showLinks(links)
+    {
+        if (!linksList) {
             return;
         }
-        if (emptyState) emptyState.style.display = 'none';
+        if (links.length === 0) {
+            linksList.innerHTML = '';
+            if (emptyState) {
+                emptyState.style.display = 'block';
+            }
+            return;
+        }
+        if (emptyState) {
+            emptyState.style.display = 'none';
+        }
         linksList.innerHTML = links.map(renderLinkCard).join('');
         attachCardListeners();
     }
@@ -221,9 +251,14 @@
      *
      * @param {object} link
      */
-    function prependLinkCard(link) {
-        if (!linksList) return;
-        if (emptyState) emptyState.style.display = 'none';
+    function prependLinkCard(link)
+    {
+        if (!linksList) {
+            return;
+        }
+        if (emptyState) {
+            emptyState.style.display = 'none';
+        }
         var card = document.createElement('div');
         card.innerHTML = renderLinkCard(link);
         linksList.insertBefore(card.firstElementChild, linksList.firstChild);
@@ -235,7 +270,8 @@
      *
      * @param {string} linkId
      */
-    function removeLinkCard(linkId) {
+    function removeLinkCard(linkId)
+    {
         var card = linksList && linksList.querySelector('[data-link-id="' + linkId + '"]');
         if (card) {
             card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
@@ -244,7 +280,9 @@
             setTimeout(function () {
                 card.remove();
                 if (linksList && linksList.querySelectorAll('.invite-link-card').length === 0) {
-                    if (emptyState) emptyState.style.display = 'block';
+                    if (emptyState) {
+                        emptyState.style.display = 'block';
+                    }
                 }
             }, 300);
         }
@@ -253,7 +291,8 @@
     /**
      * Attach event listeners to link cards.
      */
-    function attachCardListeners() {
+    function attachCardListeners()
+    {
         var copyButtons = document.querySelectorAll('.btn-copy');
         copyButtons.forEach(function (btn) {
             btn.addEventListener('click', handleCopyUrl);
@@ -270,7 +309,8 @@
      *
      * @param {Event} e
      */
-    function handleCopyUrl(e) {
+    function handleCopyUrl(e)
+    {
         var btn = e.currentTarget;
         var url = btn.dataset.url;
         navigator.clipboard.writeText(url).then(function () {
@@ -288,7 +328,8 @@
      *
      * @param {Event} e
      */
-    function handleRevoke(e) {
+    function handleRevoke(e)
+    {
         var btn = e.currentTarget;
         var linkId = btn.dataset.linkId;
         if (!confirm('Revoke this invite link? This cannot be undone.')) {
@@ -319,9 +360,14 @@
     /**
      * Open the create modal.
      */
-    function openModal() {
-        if (createModal) createModal.style.display = 'block';
-        if (modalOverlay) modalOverlay.style.display = 'block';
+    function openModal()
+    {
+        if (createModal) {
+            createModal.style.display = 'block';
+        }
+        if (modalOverlay) {
+            modalOverlay.style.display = 'block';
+        }
         document.body.style.overflow = 'hidden';
         loadServers();
     }
@@ -329,12 +375,19 @@
     /**
      * Close the create modal.
      */
-    function closeModal() {
-        if (createModal) createModal.style.display = 'none';
-        if (modalOverlay) modalOverlay.style.display = 'none';
+    function closeModal()
+    {
+        if (createModal) {
+            createModal.style.display = 'none';
+        }
+        if (modalOverlay) {
+            modalOverlay.style.display = 'none';
+        }
         document.body.style.overflow = '';
         // Reset form
-        if (createForm) createForm.reset();
+        if (createForm) {
+            createForm.reset();
+        }
         if (librarySelect) {
             librarySelect.innerHTML = '<option value="">Select a server first...</option>';
             librarySelect.disabled = true;
@@ -344,7 +397,8 @@
     /**
      * Load servers for the dropdown.
      */
-    function loadServers() {
+    function loadServers()
+    {
         fetchJson('/api/v1/me/servers').then(function (result) {
             if (!result.ok) {
                 if (result.status === 401) {
@@ -353,7 +407,9 @@
                 return;
             }
             var servers = result.data.servers || [];
-            if (!serverSelect) return;
+            if (!serverSelect) {
+                return;
+            }
             serverSelect.innerHTML = '<option value="">Select a server...</option>';
             servers.forEach(function (server) {
                 var opt = document.createElement('option');
@@ -369,8 +425,11 @@
      *
      * @param {string} serverId
      */
-    function loadLibraries(serverId) {
-        if (!librarySelect) return;
+    function loadLibraries(serverId)
+    {
+        if (!librarySelect) {
+            return;
+        }
         if (!serverId) {
             librarySelect.innerHTML = '<option value="">Select a server first...</option>';
             librarySelect.disabled = true;
@@ -408,7 +467,8 @@
      *
      * @param {Event} e
      */
-    function handleCreate(e) {
+    function handleCreate(e)
+    {
         e.preventDefault();
         var formData = new FormData(e.target);
         var data = {
@@ -447,7 +507,8 @@
     /**
      * Load and render the invite links list.
      */
-    function loadInviteLinks() {
+    function loadInviteLinks()
+    {
         fetchJson('/api/v1/me/invite-links').then(function (result) {
             if (!result.ok) {
                 if (result.status === 401) {
@@ -463,7 +524,8 @@
     /**
      * Initialize the page.
      */
-    function init() {
+    function init()
+    {
         // Event listeners for modal
         if (btnNewInvite) {
             btnNewInvite.addEventListener('click', openModal);
