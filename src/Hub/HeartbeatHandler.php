@@ -122,6 +122,43 @@ class HeartbeatHandler
     }
 
     /**
+     * Get recent heartbeat history for a server.
+     *
+     * @param string $serverId Server UUID.
+     * @param int    $limit    Maximum number of rows to return.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function getHeartbeatHistory(string $serverId, int $limit = 20): array
+    {
+        /** @var list<array<string, mixed>> $rows */
+        $rows = $this->db->query(
+            'SELECT id, version, uptime_seconds, active_sessions, active_transcodes, received_at
+             FROM server_heartbeats
+             WHERE server_id = :server_id
+             ORDER BY received_at DESC
+             LIMIT :limit',
+            ['server_id' => $serverId, 'limit' => $limit],
+        );
+
+        /** @var list<array<string, mixed>> $result */
+        $result = [];
+        foreach ($rows as $row) {
+            /** @var array<string, mixed> $typedRow */
+            $typedRow = $row;
+            $result[] = [
+                'id'               => $typedRow['id'],
+                'version'         => $typedRow['version'],
+                'uptime_seconds'  => (int) ($typedRow['uptime_seconds'] ?? 0),
+                'active_sessions' => (int) ($typedRow['active_sessions'] ?? 0),
+                'active_transcodes' => (int) ($typedRow['active_transcodes'] ?? 0),
+                'received_at'     => (int) ($typedRow['received_at'] ?? 0),
+            ];
+        }
+        return $result;
+    }
+
+    /**
      * Extract the `kid` from a JWT header without validating the token.
      *
      * @param string $token The JWT to extract from.
