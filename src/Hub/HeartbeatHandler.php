@@ -143,16 +143,17 @@ class HeartbeatHandler
 
         /** @var list<array<string, mixed>> $result */
         $result = [];
+        $int = fn (mixed $v): int => is_numeric($v) ? (int) $v : 0;
         foreach ($rows as $row) {
             /** @var array<string, mixed> $typedRow */
             $typedRow = $row;
             $result[] = [
                 'id'               => $typedRow['id'],
                 'version'         => $typedRow['version'],
-                'uptime_seconds'  => (int) ($typedRow['uptime_seconds'] ?? 0),
-                'active_sessions' => (int) ($typedRow['active_sessions'] ?? 0),
-                'active_transcodes' => (int) ($typedRow['active_transcodes'] ?? 0),
-                'received_at'     => (int) ($typedRow['received_at'] ?? 0),
+                'uptime_seconds'  => $int($typedRow['uptime_seconds'] ?? ''),
+                'active_sessions' => $int($typedRow['active_sessions'] ?? ''),
+                'active_transcodes' => $int($typedRow['active_transcodes'] ?? ''),
+                'received_at'     => $int($typedRow['received_at'] ?? ''),
             ];
         }
         return $result;
